@@ -1,0 +1,38 @@
+<div class="floating-button flex align-content-end flex-wrap">
+    <p-button icon="pi pi-check" [rounded]="true" size="large" (onClick)="changeButton()"></p-button>
+</div>
+@if (mostrarChat) {
+    <div class="floating-panel">
+        <div class="flex flex-column h-full">
+            <div class="flex align-items-center border-bottom-1 surface-border p-3">
+                <!-- <div class="relative flex align-items-center mr-3">
+                    <img alt="user.name" class="w-4rem h-4rem border-circle shadow-4" src="assets/demo/images/avatar/ionibowcher.png">
+                    <span class="w-1rem h-1rem border-circle border-2 surface-border absolute bottom-0 right-0 bg-green-400"></span>
+                </div> -->
+                <div class="mr-2"><span class="text-900 font-semibold block">Chatbot</span></div>
+            </div>
+            <div class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto" style="max-height: 100vh;">
+                <!-- Chat Messages -->
+                <app-chat-message text="Saludos, soy Sam, ¿Cuál es tu nombre? y ¿En qué puedo ayudarte?"/>
+
+                @for (message of messages(); track $index) {
+                    @if( message.isGpt ) {
+                        <app-chat-message [text]="message.text"/>
+                    } @else {
+                        <app-my-message [text]="message.text"/>
+                    }
+                }
+                @if (isLoading()) {
+                    <app-typing-loader />
+                }
+
+            </div>
+            <!-- MessageBox -->
+            <app-text-message-box
+                placeholder="Escribe aquí lo que deseas"
+                (onMessage)="handleMessage($event)"
+                class="flex align-items-center mt-auto border-top-1 surface-border p-1"
+                />
+        </div>
+    </div>
+}

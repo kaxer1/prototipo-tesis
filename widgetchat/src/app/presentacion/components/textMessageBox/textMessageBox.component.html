@@ -1,0 +1,21 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="handleSubmit()"
+  class="col-12 flex flex-column sm:flex-row align-items-center mt-auto">
+
+  <input
+    type="text"
+    pInputText
+    autofocus
+    class="flex-1 w-full border-round mr-2"
+    [placeholder]="placeholder"
+    formControlName="prompt"
+    [autocomplete]=" disableCorrections ? 'on':'off'"
+    [spellcheck]=" disableCorrections ? 'on':'off'"
+  >
+
+  <div class="flex w-full sm:w-auto">
+    <p-button label="Enviar" icon="pi pi-send" iconPos="right" [disabled]="form.invalid" type="submit"></p-button>
+  </div>
+
+</form>
