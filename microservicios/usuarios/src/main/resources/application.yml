@@ -1,0 +1,35 @@
+server:
+  port: ${PORT:8002}
+spring:
+  application:
+    name: usuarios
+  cloud:
+    config:
+      profile: tesis
+    consul:
+      discovery:
+        hostname: 127.0.0.1
+        port: { server.port }
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        serviceName: mcs-${spring.application.name}
+#        management-port: {server.port}
+        healthCheckPath: ${management.server.base-path}/health
+        healthCheckInterval: 15s
+  # PostgreSQL properties
+  datasource:
+    url: jdbc:postgresql://localhost:5432/asistanstDB
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  # Hibernate properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+management:
+  server:
+    port: {server.port}
+    base-path: /management

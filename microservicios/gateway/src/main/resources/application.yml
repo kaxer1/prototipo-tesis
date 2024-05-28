@@ -1,0 +1,28 @@
+server:
+  port: 8091
+spring:
+  application:
+    name: gateway
+  cloud:
+    config:
+      profile: tesis
+    consul:
+      discovery:
+        hostname: 127.0.0.1
+        port: {server.port}
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        serviceName: mcs-${spring.application.name}
+#        management-port: {server.port}
+        healthCheckPath: ${management.server.base-path}/health
+        healthCheckInterval: 15s
+  main:
+    allow-bean-definition-overriding: true
+  config:
+    import: optional:configserver:http://gateway-config:8888
+  web:
+    resources:
+      add-mappings: false
+management:
+  server:
+    port: {server.port}
+    base-path: /management
