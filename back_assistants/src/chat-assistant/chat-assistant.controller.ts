@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ChatAssistantService } from './chat-assistant.service';
 import { QuestionDto } from './dtos/question.dto';
 
@@ -17,6 +17,11 @@ export class ChatAssistantController {
     @Body() questionDto: QuestionDto
   ) {
     return await this.chatAssistantService.userQuestion(questionDto);
+  }
+
+  @Get('isalive')
+  healthCheck() {
+    return { status: 'ok' };
   }
 
 }

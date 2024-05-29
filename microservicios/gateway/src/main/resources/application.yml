@@ -2,27 +2,42 @@ server:
   port: 8091
 spring:
   application:
-    name: gateway
+    name: api-gateway
   cloud:
-    config:
-      profile: tesis
-    consul:
+    gateway:
       discovery:
-        hostname: 127.0.0.1
-        port: {server.port}
+        locator:
+          enabled: true
+      routes:
+        - id: asistente
+          uri: lb://mcs-asistente
+          predicates:
+            - Path=/api/asistente/**
+          filters:
+            - StripPrefix=2
+        - id: usuarios
+          uri: lb://mcs-usuarios
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            - StripPrefix=2
+        - id: chatbot
+          uri: lb://nest-service
+          predicates:
+            - Path=/api/chatbot/**
+          filters:
+            - StripPrefix=2
+    consul:
+#      host: localhost
+#      port: ${server.port}
+      discovery:
+        enabled: true
+        register: true
+        service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-        serviceName: mcs-${spring.application.name}
-#        management-port: {server.port}
-        healthCheckPath: ${management.server.base-path}/health
-        healthCheckInterval: 15s
-  main:
-    allow-bean-definition-overriding: true
   config:
-    import: optional:configserver:http://gateway-config:8888
-  web:
-    resources:
-      add-mappings: false
-management:
-  server:
-    port: {server.port}
-    base-path: /management
+    import: optional:configserver:http://tesis-config:8888
+logging:
+  level:
+    com.ecwid.consul: DEBUG
+    org.springframework.cloud.consul: DEBUG

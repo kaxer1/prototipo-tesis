@@ -4,17 +4,16 @@ spring:
   application:
     name: asistente
   cloud:
-    config:
-      profile: tesis
     consul:
+#      host: localhost
+#      port: ${server.port}
       discovery:
-        hostname: 127.0.0.1
-        port: { server.port }
+        enabled: true
+        register: true
+        service-name: mcs-${spring.application.name}
         instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-        serviceName: mcs-${spring.application.name}
-#        management-port: {server.port}
-        healthCheckPath: ${management.server.base-path}/health
-        healthCheckInterval: 15s
+  config:
+    import: optional:configserver:http://tesis-config:8888
   # PostgreSQL properties
   datasource:
     url: jdbc:postgresql://localhost:5432/asistanstDB
@@ -29,8 +28,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-
-management:
-  server:
-    port: {server.port}
-    base-path: /management
+logging:
+  level:
+    com.ecwid.consul: DEBUG
+    org.springframework.cloud.consul: DEBUG
