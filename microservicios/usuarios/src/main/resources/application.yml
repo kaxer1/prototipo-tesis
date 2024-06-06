@@ -32,3 +32,6 @@ logging:
   level:
     com.ecwid.consul: DEBUG
     org.springframework.cloud.consul: DEBUG
+token:
+  signing:
+    key: dbeac0cc77478f09794f17cd0fa6f1c9ba784653707e085060b9e6dc69a38

@@ -21,7 +21,7 @@ public class Usuariosession implements Serializable {
 
     @Id
     @Column(name = "idusuario", nullable = false)
-    private Long id;
+    private Integer id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
