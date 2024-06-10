@@ -3,6 +3,7 @@ package com.tesis.mcs.usuarios.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.type.NumericBooleanConverter;
@@ -28,9 +29,9 @@ public class Usuariodetalle implements Serializable, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @ManyToOne()
     @JoinColumn(name = "idrol")
+    @ToString.Exclude
     private Rol idrol;
 
     @Column(name = "email", nullable = false, length = 100)

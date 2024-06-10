@@ -19,8 +19,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements IJwtService {
-    @Value("${token.signing.key}")
-    private String jwtSigningKey;
+
+    private String jwtSigningKey = "dbeac0cc77478f09794f17cd0fa6f1c9ba784653707e085060b9e6dc69a38";
 
     private String tokenSession;
 

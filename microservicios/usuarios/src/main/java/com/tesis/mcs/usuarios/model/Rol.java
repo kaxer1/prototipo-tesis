@@ -8,7 +8,9 @@ import org.hibernate.type.NumericBooleanConverter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,6 +35,6 @@ public class Rol implements Serializable {
     private Boolean activo;
 
     @OneToMany(mappedBy = "idrol")
-    private Set<Usuariodetalle> usuariodetalles = new LinkedHashSet<>();
+    private List<Usuariodetalle> usuariodetalles = new ArrayList<>();
 
 }

@@ -28,7 +28,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

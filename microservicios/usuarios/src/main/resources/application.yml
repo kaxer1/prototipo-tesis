@@ -28,10 +28,22 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  # Email properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    username: eep.esfot2022@gmail.com
+    password: yyvh rasm vrtt emph
+    properties:
+      mail:
+        smtp:
+          auth: true
+          quitwait: false
+          starttls:
+            enable: true
+            required: true
 logging:
   level:
     com.ecwid.consul: DEBUG
     org.springframework.cloud.consul: DEBUG
-token:
-  signing:
-    key: dbeac0cc77478f09794f17cd0fa6f1c9ba784653707e085060b9e6dc69a38

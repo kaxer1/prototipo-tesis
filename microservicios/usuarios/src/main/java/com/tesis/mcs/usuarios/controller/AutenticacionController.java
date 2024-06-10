@@ -4,10 +4,14 @@ import com.tesis.mcs.lib.emuns.EnumEstadoSession;
 import com.tesis.mcs.lib.utils.RespuestaComun;
 import com.tesis.mcs.lib.utils.TesisNotFoundException;
 import com.tesis.mcs.usuarios.jwt.JwtServiceImpl;
+import com.tesis.mcs.usuarios.model.Usuariodetalle;
 import com.tesis.mcs.usuarios.model.Usuariosession;
 import com.tesis.mcs.usuarios.request.LoginRequest;
+import com.tesis.mcs.usuarios.request.RegistroRequest;
 import com.tesis.mcs.usuarios.response.LoginResponse;
+import com.tesis.mcs.usuarios.service.IRolService;
 import com.tesis.mcs.usuarios.service.IUsuarioDetalleService;
+import com.tesis.mcs.usuarios.service.imp.EnvioEmail;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -25,7 +29,13 @@ import java.util.Map;
 public class AutenticacionController {
 
     @Autowired
+    private IRolService serviceRol;
+
+    @Autowired
     private IUsuarioDetalleService serviceUsuarioDetalle;
+
+    @Autowired
+    private EnvioEmail serviceEmail;
 
     @Autowired
     private JwtServiceImpl serviceJwt;
@@ -97,6 +107,51 @@ public class AutenticacionController {
         mdatos.put("idrol",resp.getDto().getIdrol());
         mdatos.put("nrol",resp.getDto().getNrol());
         return new ResponseEntity<>(resp, serviceJwt.generaToken(mdatos, entity), HttpStatus.OK);
+    }
+
+    @PostMapping("/registro")
+    public ResponseEntity<RespuestaComun> validarRegistro(HttpServletRequest request, @RequestBody RegistroRequest registro) throws Exception {
+        Usuariodetalle usuariodetalle = new Usuariodetalle();
+        usuariodetalle.setApellidos(registro.getApellidos());
+        usuariodetalle.setNombres(registro.getNombres());
+        usuariodetalle.setEmail(registro.getEmail());
+        usuariodetalle.setEstado(true);
+        usuariodetalle.setCelular(registro.getCelular());
+        usuariodetalle.setCambiopassword(false);
+        usuariodetalle.setUsername(registro.getUsername());
+        usuariodetalle.setPassword("");
+        usuariodetalle.setIdrol(serviceRol.buscarPorId(2)); // Registra solo para usuarios con rol 2 USUARIOS
+
+        var entity = serviceUsuarioDetalle.insertarUsuarioDetalle(usuariodetalle);
+        LoginResponse resp = new LoginResponse();
+        if (entity == null) {
+            throw new TesisNotFoundException("El usuario no se pudo registrar");
+        } else {
+
+            LoginResponse.DataUserDto dto = new LoginResponse.DataUserDto();
+            dto.setIdusuario(entity.getId());
+            dto.setUsername(entity.getUsername());
+            dto.setEmail(entity.getEmail());
+            dto.setIdrol(entity.getIdrol().getId());
+            dto.setNrol(entity.getIdrol().getNombre());
+
+            resp.setDto(dto);
+            resp.setCodigo("OK");
+            resp.setMensaje("REGISTRO EXITOSO");
+        }
+        Map<String, Object> mdatos = new HashMap<>();
+        try {
+            mdatos.put("idusuario",resp.getDto().getIdusuario());
+            mdatos.put("username",resp.getDto().getUsername());
+            mdatos.put("email",resp.getDto().getEmail());
+            mdatos.put("idrol",resp.getDto().getIdrol());
+            mdatos.put("nrol",resp.getDto().getNrol());
+            var token = serviceJwt.generateTokenNuevoUser(mdatos, entity);
+            serviceEmail.sendEmailRegistroNuevoUsuario(entity.getEmail(), token, entity.getNombres() + " " + entity.getApellidos());
+        } catch (Exception e) {
+            throw new TesisNotFoundException("Error: {0}", e.getMessage());
+        }
+        return new ResponseEntity<>(resp, serviceJwt.regeneraToken(), HttpStatus.OK);
     }
 
 }

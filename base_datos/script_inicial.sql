@@ -1,0 +1,15 @@
+INSERT INTO public.rol (idrol, activo, nombre) VALUES (1, 1, 'ADMIN');
+INSERT INTO public.rol (idrol, activo, nombre) VALUES (2, 1, 'USUARIOS');
+
+--Admin12345 ==> 8122cba12b897aa5546baf90b6c82c9f646f976b3555033cbc5e0b72d4f7a5bc
+INSERT INTO public.usuariodetalle (idusuario, apellidos, cambiopassword, celular, email, estado, nombres, observacion, password, username, idrol) VALUES (1, 'ADMIN', 0, '0987654321', 'admin@gmail.com', 1, 'ADMINISTRADOR', null, '8122cba12b897aa5546baf90b6c82c9f646f976b3555033cbc5e0b72d4f7a5bc', 'ADMIN', 1);
+INSERT INTO public.usuariodetalle (idusuario, apellidos, cambiopassword, celular, email, estado, nombres, observacion, password, username, idrol) VALUES (2, 'CURAY', 0, '0963185962', 'kevincuray41@gmail.com', 1, 'KEVIN', null, '8122cba12b897aa5546baf90b6c82c9f646f976b3555033cbc5e0b72d4f7a5bc', 'KEVIN1', 2);
+
+
+
+
+
+
+
+ALTER SEQUENCE rol_idrol_seq RESTART WITH 5;
+ALTER SEQUENCE usuariodetalle_idusuario_seq RESTART WITH 5;

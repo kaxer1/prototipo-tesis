@@ -15,24 +15,6 @@ public class UsuarioDetalleResponse extends RespuestaComun<UsuarioDetalleRespons
         @Comment("Codigo de usuario.")
         private Integer idusuario;
 
-        @Comment("Codigo de usuario de ingreso.")
-        private String idusuarioing;
-
-        @Comment("Codigo de usuario de modificacion")
-        private String idusuariomod;
-
-        @Comment("Codigo de usuario de aprobacion.")
-        private String idusuarioaprobacion;
-
-        @Comment("Fecha de ingreso del registro")
-        private Date fechaingreso;
-
-        @Comment("Fecha de modificacion del registro")
-        private Date fechamodificacion;
-
-        @Comment("Fecha de Aprobacion del registro")
-        private Date fechaaprobacion;
-
         @Comment("1 catalogo activo, 0 Inactivo")
         private Boolean estado;
 

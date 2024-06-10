@@ -30,10 +30,10 @@ public class AsistenteController {
     }
 
     @PostMapping("/prueba")
-    public ResponseEntity<RespuestaComun> validarLogin(HttpServletRequest request, @RequestBody String prueba) throws Exception {
+    public ResponseEntity<RespuestaComun> prueba(HttpServletRequest request) throws Exception {
 
         if (true) {
-            throw new TesisNotFoundException("La prueba da error {0} no existe", prueba);
+            throw new TesisNotFoundException("La prueba da error {0} no existe");
         }
         return new ResponseEntity<>(new BaseResponse(), new HttpHeaders(), HttpStatus.OK);
     }

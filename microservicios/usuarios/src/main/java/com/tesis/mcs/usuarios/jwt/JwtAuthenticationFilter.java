@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var path = request.getRequestURI();
         if (path.contains("actuator")) return;
 
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader = (path.contains("login")) ? "" : request.getHeader("Authorization");
         final String jwt;
         final String username;
 
