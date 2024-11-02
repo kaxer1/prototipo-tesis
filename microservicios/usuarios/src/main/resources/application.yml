@@ -34,7 +34,7 @@ spring:
     port: 587
     protocol: smtp
     username: eep.esfot2022@gmail.com
-    password: yyvh rasm vrtt emph
+    password: esyx ysuf rtjw uhzr
     properties:
       mail:
         smtp:

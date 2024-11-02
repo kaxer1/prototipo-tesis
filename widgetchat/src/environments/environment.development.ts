@@ -1,3 +1,4 @@
 export const environment = {
-  assistantApi: 'http://localhost:3000/chat-assistant',
+  base_url_api: '/chat-platarma-api/chatbot/chat-assistant',
+  assistantId: 'asst_CfzraC9qBBxROinAmJcrLW47',
 };

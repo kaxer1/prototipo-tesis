@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -22,8 +23,7 @@ public class Cambiocontrasenia implements Serializable {
     private Integer id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @OneToOne()
     @JoinColumn(name = "idusuario", nullable = false)
     private Usuariodetalle usuariodetalle;
 
@@ -31,6 +31,7 @@ public class Cambiocontrasenia implements Serializable {
     private String passwordgenerico;
 
     @Column(name = "fechagenera")
-    private Timestamp fechagenera;
+    @Temporal(TemporalType.DATE)
+    private Date fechagenera;
 
 }

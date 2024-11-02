@@ -15,14 +15,20 @@ export class ChatAssistantService {
     }
 
     async userQuestion( questionDto: QuestionDto ) {
-        const { threadId, question } = questionDto;
+        const { threadId, question, assistantId } = questionDto;
 
         const message = await createMessageUseCase(this.openai, { threadId, question })
 
-        const run = await createRunUseCase(this.openai, { threadId })
+        const run = await createRunUseCase(this.openai, { threadId, assistantId })
 
         await checkCompleteStatusUseCase(this.openai, { runId: run.id, threadId: threadId})
 
+        const messages = await getMessageListUseCase(this.openai, {threadId});
+
+        return messages.reverse();
+    }
+
+    async getListThreadAnterior(threadId: string) {
         const messages = await getMessageListUseCase(this.openai, {threadId});
 
         return messages.reverse();

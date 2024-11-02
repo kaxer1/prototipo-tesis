@@ -29,18 +29,19 @@ export class AuthGuard implements CanActivate {
       //      })
       //   return r !== undefined
       // })
-      const url = '';
 
-      if (url.length > 0) {
-        return true;
-      }
+      // if (url.length > 0) {
+      //   return true;
+      // }
+      return true;
     }
 
     if (route.routeConfig.path == 'recuperar' || route.routeConfig.path == 'confirmaremail') {
       return true;
     }
 
-    this.router.navigate(['/']);
+
+    this.router.navigate(["/auth/login"]);
     return false;
   }
 

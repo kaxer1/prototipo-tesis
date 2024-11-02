@@ -1,8 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { LoginService } from 'src/app/plataforma/service/login/login.service';
 import { SHA256 } from 'crypto-js';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Component({
     selector: 'app-login',
@@ -18,29 +20,22 @@ import { SHA256 } from 'crypto-js';
 })
 export class LoginComponent {
 
-    valCheck: string[] = ['remember'];
-
     @ViewChild('formReg', { static: true }) form: NgForm;
 
     public registro: any = {};
     
-    constructor(
-        public loginService: LoginService,
-        public layoutService: LayoutService
-    ) {}
+    constructor( public loginService: LoginService ) {}
 
     iniciarSession() {
-        console.log(this.form);
-        
         let clave = SHA256( this.registro.password ).toString();
     
         let dataUsuario = {
-            serial: "aafdfad61678432a819dbd079974cf",
+            serial: uuidv4(),
             email: this.registro.email,
             password: clave
         };
     
-        this.loginService.singin(dataUsuario).subscribe(res => {
+        this.loginService.login(dataUsuario).subscribe(res => {
     
           if (res.codigo === "ERROR") {
             return;
@@ -51,11 +46,17 @@ export class LoginComponent {
     }
 
     SuccessResponse(res) {
-        // this.LoginService.logout();
-        // this.dcentral.encriptarData(res);
-        // this.dcentral.desencriptarDataUser(); // es necesario para actualizacion rapida de los datos en el sistema.
-        // this.LoginService.setlogin(true);
-        // this.dcentral.setMenuRol(res.menu); 
-      }
+        this.loginService.logout();
+        this.loginService.dcentral.encriptarData(res);
+        this.loginService.dcentral.desencriptarDataUser(); // es necesario para actualizacion rapida de los datos en el sistema.
+        this.loginService.guardarToken();
+        // this.loginService.dcentral.setMenuRol(res.menu); 
+    }
+
+    irregistrase() {
+        
+        this.loginService.router.navigate(["/auth/registrar"], { skipLocationChange: false });
+        
+    }
 
 }

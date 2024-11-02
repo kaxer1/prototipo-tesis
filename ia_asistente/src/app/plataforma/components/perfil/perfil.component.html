@@ -1,0 +1,31 @@
+<div class="grid">
+    <div class="col-5">
+        <div class="card p-fluid">
+            <form #formReg="ngForm" autocomplete="off">
+                <h4>Perfil</h4>
+                <div class="field">
+                    <label htmlFor="username">Username</label>
+                    <input pInputText id="username" name="username" type="text" [(ngModel)]="registro.username" maxlength="20" required/>
+                </div>
+                <div class="field">
+                    <label htmlFor="celular">celular</label>
+                    <input pInputText id="celular" name="celular" type="text" [(ngModel)]="registro.celular" maxlength="10" required/>
+                </div>
+                <div class="field">
+                    <label htmlFor="nombres">nombres</label>
+                    <input pInputText id="nombres" name="nombres" type="text" [(ngModel)]="registro.nombres" maxlength="100" required/>
+                </div>
+                <div class="field">
+                    <label htmlFor="apellidos">apellidos</label>
+                    <input pInputText id="apellidos" name="apellidos" type="text" [(ngModel)]="registro.apellidos" maxlength="100" required/>
+                </div>
+                <div class="field">
+                    <label htmlFor="observacion">Observación</label>
+                    <textarea rows="5" name="observacion" cols="30" placeholder="Personaliza tu asistente" [(ngModel)]="registro.observacion" pInputTextarea required></textarea>
+                </div>
+                
+                <button pButton pRipple label="Actulaizar" class="w-full p-3 text-xl" (click)="actualizarUsuario()" [disabled]="!formReg.valid"></button>
+            </form>
+        </div>
+    </div>
+</div>

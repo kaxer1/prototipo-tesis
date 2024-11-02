@@ -22,11 +22,15 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptorService } from './plataforma/service/http-error-interceptor.service';
 import { TokenInterceptorService } from './plataforma/service/login/token-interceptor.service';
 import { MessageService } from 'primeng/api';
+import { EndpointsService } from './plataforma/service/api/endpoints.service';
 
 @NgModule({
     declarations: [AppComponent, NotfoundComponent],
     imports: [AppRoutingModule, AppLayoutModule],
     providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptorService, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
+        
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         CountryService,
         CustomerService,
@@ -38,10 +42,9 @@ import { MessageService } from 'primeng/api';
         MessageService,
 
         AuthGuard,
-        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptorService, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
         LoginService,
-        DataCentralService
+        DataCentralService,
+        EndpointsService
     ],
     bootstrap: [AppComponent],
 })

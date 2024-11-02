@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { DataCentralService } from './data-central.service';
@@ -20,26 +20,35 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
           let token = evt.headers.get("Authorization");
           if (token) {
             localStorage.setItem('token', token);
+            this.login.setTokenMemoria(token);
           }
 
-
-          if (evt.body && evt.body.cod == "OK") {
-            if (evt.body.message !== "") {
-              this.dcentral.mostrarmsgexito(evt.body.message);
+          if (evt.body && evt.body.codigo == "OK") {
+            if (evt.body.mensaje !== "") {
+              this.dcentral.mostrarmsgexito(evt.body.mensaje);
             }
           }
-          if (evt.body && evt.body.cod == "ERROR")
-            this.dcentral.mostrarmsgerror(evt.body.message);
+          if (evt.body && evt.body.codigo == "ERROR")
+            this.dcentral.mostrarmsgerror(evt.body.mensaje);
         }
+        return evt;
       }),
       catchError(error => {
         let errorMessage = '';
         if (error instanceof ErrorEvent) {
           // client-side error
           errorMessage = `Aplicacion error: ${error.error.message}`;
+        } else if(error instanceof HttpErrorResponse) { 
+          if (error.status == 404) {
+            errorMessage = error.error.message;
+          }
+          if (error.status === 401) {
+            errorMessage = `Servidor error: ${error.status} - ${error.message}`;
+            this.login.logout()
+          }
         } else {
           // backend error
-          errorMessage = `Servidor error: ${error.status} ${error.message}`;
+          errorMessage = `Servidor error: ${error.status} - ${error.message}`;
           if (error.status === 401) {
             this.login.logout()
           }

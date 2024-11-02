@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConsulService } from './consul.service';
 import { ConsulController } from './consul.controller';
 
@@ -7,8 +7,12 @@ import { ConsulController } from './consul.controller';
   exports: [ConsulService],
   controllers: [ConsulController]
 })
-export class ConsulModule implements OnModuleInit {
+export class ConsulModule implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly consulService: ConsulService) {}
+  
+  async onModuleDestroy() {
+    await this.consulService.deregisterService();
+  }
 
   async onModuleInit() {
     await this.consulService.registerService();

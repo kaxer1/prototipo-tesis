@@ -10,7 +10,9 @@ import { DataCentralService } from '../data-central.service';
 })
 export class LoginService {
 
-  API_URL = environment.url;
+  API_URL = environment.url_base_proxy;
+
+  private tokenmemoria: string;
 
   public get user(): User {
     return this.dcentral.user
@@ -19,11 +21,27 @@ export class LoginService {
   constructor(
     private http: HttpClient,
     public router: Router,
-    private dcentral: DataCentralService
+    public dcentral: DataCentralService
   ) { }
 
-  singin(credenciales: any) {
+  login(credenciales: any) {
     return this.http.post<LoginResp>(`${this.API_URL}/usuarios/autenticacion/login`, credenciales);
+  }
+
+  cuentaverificada() {
+    return this.http.post<LoginResp>(`${this.API_URL}/usuarios/autenticacion/cuentaverificada`,{});
+  }
+
+  singin(reg: any) {
+    return this.http.post(`${this.API_URL}/usuarios/autenticacion/registrarse`, reg);
+  }
+
+  validarEmail(email: string) {
+    return this.http.post(`${this.API_URL}/usuarios/autenticacion/recuperarcontrasenia/${email}`,{});
+  }
+  
+  confirmarCambioPassword(data: any) {
+    return this.http.post<LoginResp>(`${this.API_URL}/usuarios/autenticacion/confirmarPassword`, data);
   }
 
   getToken() {
@@ -34,32 +52,22 @@ export class LoginService {
     return !!localStorage.getItem('token');
   }
 
-  loggedRol() {
-    return (this.user.rol) ? true : false;
-  }
-
-  getRol() {
-    return this.user.rol;//Empleado
-  }
-
   logout() {
-    this.setlogin(false);
-    this.router.navigate(["/"], { skipLocationChange: false }).finally(() => {
+    this.router.navigate(["/auth/login"], { skipLocationChange: false }).finally(() => {
       location.reload()
     });
     this.dcentral.limpiarDataCentral();
   }
 
-  /**
-   * Inicio de seccion.
-   */
-  private iniciar_login: boolean = false;
-  public get login(): boolean {
-    return this.iniciar_login
+  setTokenMemoria(token: string) {
+    this.tokenmemoria = token;
   }
 
-  public setlogin(l : boolean) {
-    this.iniciar_login = l;
+  guardarToken() {
+    localStorage.setItem('token', this.tokenmemoria);
+    this.router.navigate(["/"], { skipLocationChange: false }).finally(() => {
+      location.reload()
+    });
   }
 
   /**

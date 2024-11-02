@@ -25,7 +25,7 @@ public class Usuariodetalle implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "idusuario", nullable = false)
+    @Column(name = "idusuario")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -34,13 +34,13 @@ public class Usuariodetalle implements Serializable, UserDetails {
     @ToString.Exclude
     private Rol idrol;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, length = 100, unique=true)
     private String email;
 
     @Column(name = "username", nullable = false, length = 50)
     private String username;
 
-    @Column(name = "celular", nullable = false, length = 10)
+    @Column(name = "celular", nullable = false, length = 10, unique=true)
     private String celular;
 
     @Column(name = "nombres", length = 100)

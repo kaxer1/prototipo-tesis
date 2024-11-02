@@ -14,7 +14,7 @@ export class DataCentralService {
 
   private SECRETE_KEY = 'token_esfot_epn';
   // url para conexion a la api
-  private API_URL = environment.url;
+  private API_URL = environment.url_base_proxy;
 
   // Variables del usuario y que se usa en todo el sistema.
   private dataUserLocal: User;
@@ -36,11 +36,8 @@ export class DataCentralService {
   private loading: boolean;
   public get loadingDialog(): boolean { return this.loading };
 
-  // Mensajes de toast
-  msgs: Message[] = [];
-
   constructor(
-    private messageService: MessageService,
+    public messageService: MessageService,
     private router: Router,
     private http: HttpClient,
     // public dialog: MatDialog
@@ -104,13 +101,15 @@ export class DataCentralService {
   }
 
   public mostrarmsgerror(msg: string, titulomsg = "Error"): void {
-    this.msgs = [];
-    this.msgs.push({ severity: 'error', summary: titulomsg, detail: msg });
+    this.messageService.add({ key: 'tst', severity: 'error', summary: titulomsg, detail: msg });
   }
 
   public mostrarmsgexito(msg: string, titulomsg = "Transacción exitosa"): void {
-    this.msgs = [];
-    this.msgs.push({ severity: 'success', summary: titulomsg, detail: msg });
+    this.messageService.add({ key: 'tst', severity: 'success', summary: titulomsg, detail: msg });
+  }
+  
+  public mostrarmsginfo(msg: string, titulomsg = "Advertencia"): void {
+    this.messageService.add({ key: 'tst', severity: 'info', summary: titulomsg, detail: msg });
   }
 
   /**
@@ -160,19 +159,6 @@ export class DataCentralService {
     this.router.navigate(["/" + url], { skipLocationChange: false });
   }
 
-  /**
-  * Metodo para subir archivos.
-  * @param formData FormData de los archivos
-  */
-  SubirArchivo(formData, metodo: string) {
-    if (metodo === '') return null;
-    
-    const params = new HttpParams()
-    .set('metodo', metodo)
-    return this.http.post(`${this.API_URL}/archivo/updatefile`, formData, {params})
-
-  }
-
 
   /**
    * Metodo para eliminar registros de la base de datos.
@@ -206,8 +192,7 @@ export class DataCentralService {
       }
     }
     if (letras.indexOf(tecla) == -1 && !tecla_especial) {
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Usar solo letras', detail: 'No se admite datos numéricos' });
+      this.messageService.add({ key: 'tst', severity: 'info', summary: "Usar solo letras", detail: "No se admite datos numéricos" });
       return false;
     }
     return true;
@@ -228,8 +213,7 @@ export class DataCentralService {
       return true;
     }
     else {
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Usar solo números', detail: 'No se admite el ingreso de letras' });
+      this.messageService.add({ key: 'tst', severity: 'info', summary: "Usar solo números", detail: "No se admite el ingreso de letras" });
       return false;
     }
   }

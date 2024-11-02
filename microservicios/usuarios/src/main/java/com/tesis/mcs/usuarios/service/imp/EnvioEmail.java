@@ -15,6 +15,9 @@ public class EnvioEmail {
     @Value("${spring.mail.username}")
     private String emailusername;
 
+//    private String urlbase = "https://arnuvapp.vercel.app";
+    private String urlbase = "http://localhost:4200";
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -29,20 +32,42 @@ public class EnvioEmail {
         mailSender.send(email);
     }
 
+    public void sendEmailOlvidoContrasenia(String to, String token, String password, String nombrecompleto) throws MessagingException {
+
+        MimeMessage email = mailSender.createMimeMessage();
+
+        email.setFrom(new InternetAddress(emailusername));
+        email.setRecipients(MimeMessage.RecipientType.TO, to);
+        email.setSubject("REESTABLECER CONTRASEÑA");
+
+        String htmlTemplate = themplateMailConfirmacion;
+        htmlTemplate = htmlTemplate.replace("${titulo_email}", "Reestablecer Contraseña");
+        htmlTemplate = htmlTemplate.replace("${nombrecompleto}", nombrecompleto);
+        htmlTemplate = htmlTemplate.replace("${link}", urlbase + "/auth/cambiopassword?token=${token}");
+        htmlTemplate = htmlTemplate.replace("${token}", token);
+        htmlTemplate = htmlTemplate.replace("${texto_boton}", "CAMBIAR CONTRASEÑA");
+        htmlTemplate = htmlTemplate.replace("${texto}", "Por favor cambia tu contraseña para continuar. Tu contraseña temporal es: <h3>${password}</h3>");
+        htmlTemplate = htmlTemplate.replace("${password}", password);
+        email.setContent(htmlTemplate,  "text/html; charset=utf-8");
+
+        mailSender.send(email);
+    }
+
     public void sendEmailRegistroNuevoUsuario(String to, String token, String nombrecompleto) throws MessagingException {
 
         MimeMessage email = mailSender.createMimeMessage();
-//        String url = "https://arnuvapp.vercel.app";
-        String url = "http://localhost:8080/";
 
         email.setFrom(new InternetAddress(emailusername));
         email.setRecipients(MimeMessage.RecipientType.TO, to);
         email.setSubject("VERIFICACIÓN DE CUENTA");
+
         String htmlTemplate = themplateMailConfirmacion;
+        htmlTemplate = htmlTemplate.replace("${titulo_email}", "Verificación de Cuenta");
         htmlTemplate = htmlTemplate.replace("${nombrecompleto}", nombrecompleto);
-        htmlTemplate = htmlTemplate.replace("${link}", url + "/#/verificacion?token=${token}");
+        htmlTemplate = htmlTemplate.replace("${link}", urlbase + "/auth/verificacion?token=${token}");
         htmlTemplate = htmlTemplate.replace("${token}", token);
-        htmlTemplate = htmlTemplate.replace("${texto}", "Por favor confirma tu cuenta");
+        htmlTemplate = htmlTemplate.replace("${texto_boton}", "VERIFICAR EMAIL");
+        htmlTemplate = htmlTemplate.replace("${texto}", "Por favor confirma tu email");
         email.setContent(htmlTemplate,  "text/html; charset=utf-8");
 
         mailSender.send(email);
@@ -281,7 +306,7 @@ public class EnvioEmail {
             "                              align=\"left\">\n" +
             "                              <h1 class=\"v-text-align v-font-size\"\n" +
             "                                style=\"margin: 0px; color: #27187e; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Montserrat',sans-serif; font-size: 36px; font-weight: 400;\">\n" +
-            "                                <strong>Verificación de Cuenta</strong></h1>\n" +
+            "                                <strong>${titulo_email}</strong></h1>\n" +
             "                            </td>\n" +
             "                          </tr>\n" +
             "                        </tbody>\n" +
@@ -364,7 +389,7 @@ public class EnvioEmail {
             "                                  style=\"box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #ff8600; border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px; width:auto; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;\">\n" +
             "                                  <span class=\"v-padding\"\n" +
             "                                    style=\"display:block;padding:16px 50px;line-height:120%;\"><strong><span\n" +
-            "                                        style=\"font-size: 14px; line-height: 16.8px;\">CAMBIAR CONTRASEÑA</span></strong></span>\n" +
+            "                                        style=\"font-size: 14px; line-height: 16.8px;\">${texto_boton}</span></strong></span>\n" +
             "                                </a>\n" +
             "                              </div>\n" +
             "                            </td>\n" +

@@ -1,0 +1,25 @@
+<div class="grid">
+    <div class="col-5">
+        <div class="card p-fluid">
+            <form #formReg="ngForm" autocomplete="off">
+                <h4>Crea tu asistente</h4>
+                <div class="field">
+                    <label htmlFor="name">Nombre</label>
+                    <input pInputText name="name" type="text" [(ngModel)]="registro.name" required/>
+                </div>
+                <div class="field">
+                    <label htmlFor="instructions">Instrucciones</label>
+                    <textarea rows="5" name="instructions" cols="30" placeholder="Personaliza tu asistente" [(ngModel)]="registro.instructions" pInputTextarea required></textarea>
+                </div>
+                <div class="field">
+                    <label htmlFor="model">Modelo GPT</label>
+                    <p-dropdown [options]="models" name="model" optionLabel="id" [(ngModel)]="registro.model" required></p-dropdown>
+                </div>
+                
+                <p-fileUpload name="filepdf[]" mode="basic" accept=".pdf" [maxFileSize]="1000000" (onSelect)="onSelect($event)" label="Subir" chooseLabel="Subir" class="mr-2 pb-3 inline-block"></p-fileUpload>
+
+                <button pButton pRipple label="Guardar" class="w-full p-3 text-xl" (click)="guardar()" [disabled]="!formReg.valid"></button>
+            </form>
+        </div>
+    </div>
+</div>

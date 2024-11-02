@@ -40,8 +40,31 @@ export class ChatbotComponent implements OnInit {
     this.openAiService.createThread()
       .subscribe( id => {
           this.threadId.set( id );
+          this.mensajesAnteriores( id );
       });
 
+  }
+
+  private mensajesAnteriores(id: string) {
+    this.isLoading.set(true);
+    this.openAiService.getListaMsgAnteriores(id).subscribe( replies => {
+
+      this.isLoading.set(false);
+
+      for (const reply of replies) {
+        for (const message of reply.content ) {
+
+          this.messages.update( prev => [
+            ...prev,
+            {
+              text: message,
+              isGpt: reply.role === 'assistant'
+            }
+          ]);
+
+        }
+      }
+    });
   }
 
 
@@ -68,8 +91,6 @@ export class ChatbotComponent implements OnInit {
 
           }
         }
-
-
 
       })
 

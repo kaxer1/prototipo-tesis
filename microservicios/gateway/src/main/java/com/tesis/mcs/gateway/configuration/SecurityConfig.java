@@ -5,6 +5,7 @@ import com.tesis.mcs.gateway.jwt.SecurityContextRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -31,16 +32,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http, JwtAuthenticationWebFilter jwtFilter) {
-        return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(exchangeSpec -> exchangeSpec.pathMatchers("/actuator/**","api/usuarios/autenticacion/**").permitAll()
+        return http.cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable())
+                .authorizeExchange(exchangeSpec -> exchangeSpec.pathMatchers("/actuator/**","api/usuarios/autenticacion/**",
+                                "/api/chatbot/chat-assistant/**").permitAll()
                         .anyExchange().authenticated())
-                .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.FIRST)
+//                .addFilterAt(jwtFilter, SecurityWebFiltersOrder.ANONYMOUS_AUTHENTICATION)
+                .addFilterAt(jwtFilter, SecurityWebFiltersOrder.CORS)
                 .securityContextRepository(securityContextRepository)
-//                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-//                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-//                .logout(ServerHttpSecurity.LogoutSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .build();
+    }
+
+    @Bean
+    WebSecurityCustomizer debugSecurity() {
+        return (web) -> web.debug(true);
     }
 
 }

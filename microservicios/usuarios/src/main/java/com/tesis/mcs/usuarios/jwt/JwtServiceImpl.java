@@ -114,4 +114,12 @@ public class JwtServiceImpl implements IJwtService {
                 .setExpiration(new Date(diaexp))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
+
+    public String generateTokenCambioUsuario(Map<String, Object> extraClaims, UserDetails userDetails) {
+        var diaexp = System.currentTimeMillis() + (1000 * 60 * 10); // expira en 10 min
+        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(diaexp))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+    }
 }

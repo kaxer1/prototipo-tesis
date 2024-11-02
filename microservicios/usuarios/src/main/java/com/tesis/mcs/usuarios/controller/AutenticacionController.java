@@ -1,14 +1,18 @@
 package com.tesis.mcs.usuarios.controller;
 
 import com.tesis.mcs.lib.emuns.EnumEstadoSession;
+import com.tesis.mcs.lib.response.BaseResponse;
 import com.tesis.mcs.lib.utils.RespuestaComun;
 import com.tesis.mcs.lib.utils.TesisNotFoundException;
 import com.tesis.mcs.usuarios.jwt.JwtServiceImpl;
+import com.tesis.mcs.usuarios.model.Cambiocontrasenia;
 import com.tesis.mcs.usuarios.model.Usuariodetalle;
 import com.tesis.mcs.usuarios.model.Usuariosession;
+import com.tesis.mcs.usuarios.request.CambioContraseniaRequest;
 import com.tesis.mcs.usuarios.request.LoginRequest;
 import com.tesis.mcs.usuarios.request.RegistroRequest;
 import com.tesis.mcs.usuarios.response.LoginResponse;
+import com.tesis.mcs.usuarios.service.ICambioContraseniaService;
 import com.tesis.mcs.usuarios.service.IRolService;
 import com.tesis.mcs.usuarios.service.IUsuarioDetalleService;
 import com.tesis.mcs.usuarios.service.imp.EnvioEmail;
@@ -33,6 +37,9 @@ public class AutenticacionController {
 
     @Autowired
     private IUsuarioDetalleService serviceUsuarioDetalle;
+
+    @Autowired
+    private ICambioContraseniaService serviceCambioContrasenia;
 
     @Autowired
     private EnvioEmail serviceEmail;
@@ -109,7 +116,7 @@ public class AutenticacionController {
         return new ResponseEntity<>(resp, serviceJwt.generaToken(mdatos, entity), HttpStatus.OK);
     }
 
-    @PostMapping("/registro")
+    @PostMapping("/registrarse")
     public ResponseEntity<RespuestaComun> validarRegistro(HttpServletRequest request, @RequestBody RegistroRequest registro) throws Exception {
         Usuariodetalle usuariodetalle = new Usuariodetalle();
         usuariodetalle.setApellidos(registro.getApellidos());
@@ -119,39 +126,143 @@ public class AutenticacionController {
         usuariodetalle.setCelular(registro.getCelular());
         usuariodetalle.setCambiopassword(false);
         usuariodetalle.setUsername(registro.getUsername());
-        usuariodetalle.setPassword("");
-        usuariodetalle.setIdrol(serviceRol.buscarPorId(2)); // Registra solo para usuarios con rol 2 USUARIOS
+        usuariodetalle.setPassword(registro.getPassword());
+        var rol = serviceRol.buscarPorId(2);
+        rol.setUsuariodetalles(null);
+        usuariodetalle.setIdrol(rol); // Registra solo para usuarios con rol 2 USUARIOS
 
         var entity = serviceUsuarioDetalle.insertarUsuarioDetalle(usuariodetalle);
-        LoginResponse resp = new LoginResponse();
+        BaseResponse resp = new BaseResponse();
         if (entity == null) {
             throw new TesisNotFoundException("El usuario no se pudo registrar");
         } else {
-
-            LoginResponse.DataUserDto dto = new LoginResponse.DataUserDto();
-            dto.setIdusuario(entity.getId());
-            dto.setUsername(entity.getUsername());
-            dto.setEmail(entity.getEmail());
-            dto.setIdrol(entity.getIdrol().getId());
-            dto.setNrol(entity.getIdrol().getNombre());
-
-            resp.setDto(dto);
             resp.setCodigo("OK");
             resp.setMensaje("REGISTRO EXITOSO");
         }
         Map<String, Object> mdatos = new HashMap<>();
         try {
-            mdatos.put("idusuario",resp.getDto().getIdusuario());
-            mdatos.put("username",resp.getDto().getUsername());
-            mdatos.put("email",resp.getDto().getEmail());
-            mdatos.put("idrol",resp.getDto().getIdrol());
-            mdatos.put("nrol",resp.getDto().getNrol());
+            mdatos.put("idusuario",entity.getId());
+            mdatos.put("username",entity.getUsername());
+            mdatos.put("email",entity.getEmail());
+            mdatos.put("idrol",entity.getIdrol());
+            mdatos.put("nrol",entity.getIdrol().getNombre());
             var token = serviceJwt.generateTokenNuevoUser(mdatos, entity);
             serviceEmail.sendEmailRegistroNuevoUsuario(entity.getEmail(), token, entity.getNombres() + " " + entity.getApellidos());
         } catch (Exception e) {
             throw new TesisNotFoundException("Error: {0}", e.getMessage());
         }
         return new ResponseEntity<>(resp, serviceJwt.regeneraToken(), HttpStatus.OK);
+    }
+
+    @PostMapping("/cuentaverificada")
+    public ResponseEntity<RespuestaComun> cuentaVerificado() throws Exception {
+
+        var data = serviceJwt.extraerTokenData();
+        String email = (String) data.get("email");
+        var entity = serviceUsuarioDetalle.buscarPorEmail(email);
+
+        LoginResponse resp = new LoginResponse();
+
+        LoginResponse.DataUserDto dto = new LoginResponse.DataUserDto();
+        dto.setIdusuario(entity.getId());
+        dto.setUsername(entity.getUsername());
+        dto.setEmail(entity.getEmail());
+        dto.setIdrol(entity.getIdrol().getId());
+        dto.setNrol(entity.getIdrol().getNombre());
+
+        resp.setDto(dto);
+        resp.setCodigo("OK");
+        resp.setMensaje("CUENTA VERIFICADA");
+
+        return new ResponseEntity<>(resp, serviceJwt.regeneraToken(), HttpStatus.OK);
+    }
+
+    @PostMapping("/recuperarcontrasenia/{email}")
+    public ResponseEntity<RespuestaComun> buscarPorEmail(@PathVariable String email) throws Exception {
+        var entity = serviceUsuarioDetalle.buscarPorEmail(email);
+
+        if (entity == null) {
+            throw new TesisNotFoundException("El email {0} no existe", email);
+        }
+        try {
+            Map<String, Object> mdatos = new HashMap<>();
+            mdatos.put("idusuario",entity.getId());
+            mdatos.put("username",entity.getUsername());
+            mdatos.put("email",entity.getEmail());
+            mdatos.put("idrol",entity.getIdrol().getId());
+            mdatos.put("nrol",entity.getIdrol().getNombre());
+
+            var password = serviceUsuarioDetalle.generarRandomPassword(10);
+            var passwordencrypt = serviceUsuarioDetalle.encriptarPassword(password);
+
+            var cambiocontrasenia = serviceCambioContrasenia.buscarPorIdUsuario(entity.getId());
+            var esTempNuevo = false;
+            if (cambiocontrasenia == null) {
+                cambiocontrasenia = new Cambiocontrasenia();
+                esTempNuevo = true;
+            }
+            cambiocontrasenia.setUsuariodetalle(entity);
+            cambiocontrasenia.setFechagenera(new Date());
+            cambiocontrasenia.setPasswordgenerico(passwordencrypt);
+
+            var token = serviceJwt.generateTokenCambioUsuario(mdatos, entity);
+            serviceEmail.sendEmailOlvidoContrasenia(entity.getEmail(), token, password, entity.getNombres() + " " + entity.getApellidos());
+            if (esTempNuevo) {
+                serviceCambioContrasenia.insertarCambioContrasenia(cambiocontrasenia);
+            } else {
+                serviceCambioContrasenia.actualizarCambioContrasenia(cambiocontrasenia);
+            }
+        } catch (Exception e) {
+            throw new TesisNotFoundException("Error: {0}", e.getMessage());
+        }
+        BaseResponse resp = new BaseResponse();
+        resp.setCodigo("OK");
+
+        return new ResponseEntity<>(resp, serviceJwt.regeneraToken(), HttpStatus.OK);
+    }
+
+    @PostMapping("/confirmarPassword")
+    public ResponseEntity<RespuestaComun> confirmarPassword(HttpServletRequest request, @RequestBody CambioContraseniaRequest registro) throws Exception {
+        var data = serviceJwt.extraerTokenData();
+        String email = (String) data.get("email");
+        var entity = serviceUsuarioDetalle.buscarPorEmail(email);
+
+        if (entity == null) {
+            throw new TesisNotFoundException("El email {0} no existe", email);
+        }
+
+        var contra = serviceCambioContrasenia.buscarPorCredenciales(entity.getId(), registro.getPasswordtemp());
+        if (contra == null) {
+            throw new TesisNotFoundException("No existe proceso cambio de contrasenia");
+        }
+
+        Map<String, Object> mdatos = new HashMap<>();
+        try {
+            mdatos.put("idusuario",entity.getId());
+            mdatos.put("username",entity.getUsername());
+            mdatos.put("email",entity.getEmail());
+            mdatos.put("idrol",entity.getIdrol().getId());
+            mdatos.put("nrol",entity.getIdrol().getNombre());
+
+            entity.setPassword(registro.getNuevopassword());
+            serviceUsuarioDetalle.actualizarUsuarioDetalle(entity);
+        } catch (Exception e) {
+            throw new TesisNotFoundException("Error: {0}", e.getMessage());
+        }
+        LoginResponse resp = new LoginResponse();
+
+        LoginResponse.DataUserDto dto = new LoginResponse.DataUserDto();
+        dto.setIdusuario(entity.getId());
+        dto.setUsername(entity.getUsername());
+        dto.setEmail(entity.getEmail());
+        dto.setIdrol(entity.getIdrol().getId());
+        dto.setNrol(entity.getIdrol().getNombre());
+
+        resp.setDto(dto);
+        resp.setCodigo("OK");
+        resp.setMensaje("CONTRASEÑA ACTUALIZADA");
+
+        return new ResponseEntity<>(resp, serviceJwt.generaToken(mdatos, entity), HttpStatus.OK);
     }
 
 }

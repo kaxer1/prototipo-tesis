@@ -15,6 +15,13 @@ spring:
             - Path=/api/asistente/**
           filters:
             - StripPrefix=2
+#          metadata:
+#            cors:
+#              allowedOrigins: '*'
+#              allowedMethods: '*'
+#              allowedHeaders: '*'
+#              exposedHeaders: '*'
+#              maxAge: 1000
         - id: usuarios
           uri: lb://mcs-usuarios
           predicates:
@@ -27,9 +34,19 @@ spring:
             - Path=/api/chatbot/**
           filters:
             - StripPrefix=2
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: '*'
+            allowed-methods:
+                - GET
+                - POST
+            allowed-origin-patterns: '*'
+            allowed-headers: '*'
+            allow-credentials: false
+            max-age: 1000
+            exposed-headers: '*'
     consul:
-#      host: localhost
-#      port: ${server.port}
       discovery:
         enabled: true
         register: true

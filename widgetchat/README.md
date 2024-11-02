@@ -29,3 +29,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Comandos compilacion
 ng build --output-hashing none
 npm run buildwebpack
+
+## Unificado
+npm run scriptgenerated

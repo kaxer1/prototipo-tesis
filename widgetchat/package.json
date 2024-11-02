@@ -7,7 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "buildwebpack": "webpack --config webpack.config.js"
+    "ng-build-no-hash": "ng build --output-hashing none",
+    "buildwebpack": "webpack --config webpack.config.js",
+    "zip-build": "node zip.js",
+    "scriptgenerated": "npm run ng-build-no-hash && npm run buildwebpack && npm run zip-build"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +35,7 @@
     "@angular/cli": "^17.2.2",
     "@angular/compiler-cli": "^17.2.0",
     "@types/jasmine": "~5.1.0",
+    "archiver": "^7.0.1",
     "css-loader": "^6.10.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",

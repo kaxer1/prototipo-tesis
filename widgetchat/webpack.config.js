@@ -16,4 +16,13 @@ module.exports = {
       },
     ],
   },
+  devServer: {
+    proxy: {
+      context: ['/chat-platarma-api'],
+      target: 'http://127.0.0.1:8091',
+      pathRewrite: { '^/chat-platarma-api': '/api' },
+      secure: false,
+      changeOrigin: false
+    },
+  },
 };

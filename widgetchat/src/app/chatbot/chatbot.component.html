@@ -12,9 +12,10 @@
                 <div class="mr-2"><span class="text-900 font-semibold block">Chatbot</span></div>
             </div>
             <div class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto" style="max-height: 100vh;">
+                <div class="flex align-items-center border-bottom-1 surface-border p-3">
+                    <div class="mr-2"><span class="text-900 font-semibold block">Escribe cual es tu duda</span></div>
+                </div>
                 <!-- Chat Messages -->
-                <app-chat-message text="Saludos, soy Sam, ¿Cuál es tu nombre? y ¿En qué puedo ayudarte?"/>
-
                 @for (message of messages(); track $index) {
                     @if( message.isGpt ) {
                         <app-chat-message [text]="message.text"/>

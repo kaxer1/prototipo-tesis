@@ -1,13 +1,7 @@
 import { Menu } from "./menu.model";
+import { CommunResponse } from "./comun.interface";
 
-export interface CommunResponse<T> {
-    mensaje: string | null;
-    codigo:  string | null;
-    dto:     T;
-    lista:   T[];
-}
-
-export interface LoginDto {
+export interface User {
     idusuario: number;
     username:  string;
     email:     string;
@@ -15,39 +9,37 @@ export interface LoginDto {
     nrol:      string;
 }
 
-export interface LoginResp extends CommunResponse<LoginDto> {}
+export interface LoginResp extends CommunResponse<User> {}
 
 
 
-export interface User {
-    id?: number,
-    username: string,
-    fullname: string,
-    nombre: string,
-    apellido: string,
-    cedula: string,
-    email: string,
-    rol: number,
-    iniciales: string,
-    sufrago?: boolean,
-    activo?: boolean | null,
-    estudiante?: boolean | null,
-    password?: string,
-    vota?: boolean
-    tiemposesion?: number,
-    nrol?: string
-}
+// export interface User {
+//     id?: number,
+//     username: string,
+//     fullname: string,
+//     nombre: string,
+//     apellido: string,
+//     cedula: string,
+//     email: string,
+//     rol: number,
+//     iniciales: string,
+//     sufrago?: boolean,
+//     activo?: boolean | null,
+//     estudiante?: boolean | null,
+//     password?: string,
+//     vota?: boolean
+//     tiemposesion?: number,
+//     nrol?: string
+// }
 
 export const userDefault: User = {
-    username: '',
-    fullname: '',
-    nombre: '',
-    apellido: '',
-    cedula: '',
-    email: '',
-    rol: undefined,
-    iniciales: ''
+    idusuario: 0,
+    username:  "",
+    email:     "",
+    idrol:     0,
+    nrol:      "",
 }
+
 
 export interface permisosSistema {
     crear: boolean,

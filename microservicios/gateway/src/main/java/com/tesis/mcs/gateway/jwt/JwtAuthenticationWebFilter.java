@@ -21,8 +21,12 @@ public class JwtAuthenticationWebFilter implements WebFilter{
         if (path.contains("actuator")) {
             return chain.filter(exchange);
         }
-        if(path.contains("auth"))
+        if(path.contains("login") || path.contains("registrarse") || path.contains("recuperarcontrasenia"))
             return chain.filter(exchange);
+
+        if(path.contains("/api/chatbot/chat-assistant"))
+            return chain.filter(exchange);
+
         String auth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if(auth == null)
             return Mono.error(new Throwable("no token was found"));

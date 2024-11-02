@@ -4,33 +4,44 @@ import com.tesis.mcs.lib.utils.RespuestaComun;
 import lombok.Data;
 import org.hibernate.annotations.Comment;
 
-import java.util.Date;
-
 @Data
 public class UsuarioDetalleResponse extends RespuestaComun<UsuarioDetalleResponse.UsuarioDetalleDto> {
 
     @Data
     public static class UsuarioDetalleDto {
 
-        @Comment("Codigo de usuario.")
-        private Integer idusuario;
+        @Comment("Codigo de usuario")
+        private Integer id;
 
-        @Comment("1 catalogo activo, 0 Inactivo")
-        private Boolean estado;
+        @Comment("Codigo de rol")
+        private Integer idrol;
 
-        @Comment("Nombre de usuario ")
+        @Comment("Correo electronico")
+        private String email;
+
+        @Comment("Username")
         private String username;
 
-        @Comment("Password encriptado del usuario.")
+        @Comment("Celular")
+        private String celular;
+
+        @Comment("Nombre de la persona")
+        private String nombres;
+
+        @Comment("Apellido de la persona")
+        private String apellidos;
+
+        @Comment("Estado del usuario")
+        private Boolean estado;
+
+        @Comment("Contrasenia")
         private String password;
 
-        @Comment("1, Indica que el usuario tiene que cambiar de password")
+        @Comment("Cambio de contrasenia")
         private Boolean cambiopassword;
 
-        @Comment("Observacion del usuario, ejemplo cuando hay cambio de estado")
+        @Comment("Observacion")
         private String observacion;
-
-//		private Usuariosession usuariosession;
 
     }
 }

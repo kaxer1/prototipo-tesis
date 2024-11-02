@@ -24,8 +24,7 @@ public class Usuariosession implements Serializable {
     private Integer id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @OneToOne(optional = false)
     @JoinColumn(name = "idusuario", nullable = false)
     private Usuariodetalle usuariodetalle;
 

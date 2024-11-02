@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ChatAssistantService } from './chat-assistant.service';
 import { QuestionDto } from './dtos/question.dto';
 
@@ -17,6 +17,13 @@ export class ChatAssistantController {
     @Body() questionDto: QuestionDto
   ) {
     return await this.chatAssistantService.userQuestion(questionDto);
+  }
+
+  @Get('list-messages-before/:threadid')
+  async beforeListMessages(
+    @Param('threadid') threadId: string,
+  ) {
+    return await this.chatAssistantService.getListThreadAnterior(threadId);
   }
 
   @Get('isalive')
