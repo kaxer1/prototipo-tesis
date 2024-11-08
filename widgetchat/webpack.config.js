@@ -17,12 +17,20 @@ module.exports = {
     ],
   },
   devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    port: 8080,
+    host: '0.0.0.0', // Escuchar en todas las interfaces
     proxy: {
-      context: ['/chat-platarma-api'],
-      target: 'http://127.0.0.1:8091',
-      pathRewrite: { '^/chat-platarma-api': '/api' },
-      secure: false,
-      changeOrigin: false
+      '/chat-plataforma-api': {
+        target: 'http://localhost:8091',
+        pathRewrite: { '^/chat-plataforma-api': '/api' },
+        secure: false,
+        changeOrigin: true,
+      }
     },
+    allowedHosts: [
+      'localhost', // Agrega localhost o cualquier host necesario
+    ],
+    hot: true,
   },
 };

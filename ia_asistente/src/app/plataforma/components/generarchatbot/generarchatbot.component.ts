@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { EndpointsService } from '../../service/api/endpoints.service';
-import { AssistantCreated, FileVectorStorage, ModelsOpenAI } from '../../interfaces/proceso.interface';
+import { AssistantCreated, FileVectorStorage, ModelsOpenAI } from '../../interfaces/openAI.interface';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -29,8 +29,13 @@ export class GenerarChatbotComponent implements OnInit, AfterViewInit {
         this.buscarAsistentePorIdUsuario();
     }
 
-    mostarGenerar(asistente) {
+    generarInstalable(asistente) {
         this.endpoint.downloadFile(`/chatbot/openai/generar-instalador/${asistente.idasistente}`).subscribe(resp => {
+        });
+    }
+
+    generarInstalableWordpress(asistente) {
+        this.endpoint.downloadFile(`/chatbot/openai/generar-instalador-wordpress/${asistente.idasistente}`).subscribe(resp => {
         });
     }
 

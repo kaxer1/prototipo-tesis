@@ -7,7 +7,7 @@ import { join } from 'path';
 import { execSync } from 'child_process';
 import { Response } from 'express';
 import { existsSync } from 'fs';
-import { modificarVaribleUseCase } from './use-cases';
+import { modificarVaribleUseCase, TipoInstalador } from './use-cases';
 
 
 const MAX_PROFILE_PICTURE_SIZE_IN_BYTES = 2 * 1024 * 1024; //2MB
@@ -61,7 +61,37 @@ export class EndpointsOpenaiController {
     const zipFilePath = join(commandPath, 'dist', 'build.zip');
 
     try {
-      await modificarVaribleUseCase(assistantid);
+      await modificarVaribleUseCase(assistantid, TipoInstalador.Xamp);
+      // Ejecutar el comando en un path específico
+      await execSync(command, { cwd: commandPath });
+
+      // Verificar si el archivo ZIP existe
+      if (!existsSync(zipFilePath)) {
+        throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Enviar el archivo ZIP al cliente
+      res.download(zipFilePath, 'build.zip', (err) => {
+        if (err) {
+          throw new HttpException('Failed to send file', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      });
+    } catch (error) {
+      console.error('Error executing command or sending file:', error);
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('generar-instalador-wordpress/:assistantid')
+  async generarEjecutableWordpress(
+    @Param('assistantid') assistantid: string,
+    @Res() res: Response) {
+    const command = 'npm run scriptgenerated';
+    const commandPath = process.env.PATH_EJECUTABLE;
+    const zipFilePath = join(commandPath, 'dist', 'build.zip');
+
+    try {
+      await modificarVaribleUseCase(assistantid, TipoInstalador.Wordpress);
       // Ejecutar el comando en un path específico
       await execSync(command, { cwd: commandPath });
 

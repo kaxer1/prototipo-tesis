@@ -1,0 +1,9 @@
+<div>
+    <ng-content> </ng-content>
+</div>
+<div class="flex justify-content-between flex-wrap">
+    @if (entidadCrud !== undefined) {
+        <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-info" size="small" (click)="entidadCrud.seleccionarRegistro(reg)"></button>
+        <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" size="small" (click)="eliminarRegistro(reg)"></button>
+    }
+</div>

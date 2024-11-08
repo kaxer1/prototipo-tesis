@@ -19,10 +19,6 @@
                     <label htmlFor="apellidos">apellidos</label>
                     <input pInputText id="apellidos" name="apellidos" type="text" [(ngModel)]="registro.apellidos" maxlength="100" required/>
                 </div>
-                <div class="field">
-                    <label htmlFor="observacion">Observación</label>
-                    <textarea rows="5" name="observacion" cols="30" placeholder="Personaliza tu asistente" [(ngModel)]="registro.observacion" pInputTextarea required></textarea>
-                </div>
                 
                 <button pButton pRipple label="Actulaizar" class="w-full p-3 text-xl" (click)="actualizarUsuario()" [disabled]="!formReg.valid"></button>
             </form>

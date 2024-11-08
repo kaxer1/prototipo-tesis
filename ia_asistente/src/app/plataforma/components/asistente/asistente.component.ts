@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { EndpointsService } from '../../service/api/endpoints.service';
-import { AssistantCreated, FileVectorStorage, ModelsOpenAI } from '../../interfaces/proceso.interface';
+import { AssistantCreated, FileVectorStorage, ModelsOpenAI } from '../../interfaces/openAI.interface';
 import { NgForm } from '@angular/forms';
+import { CrudEntidad } from '../../shared/crud.component';
+import { Asistente } from '../../interfaces/asistente.interface';
 
 @Component({
     templateUrl: './asistente.component.html'
 })
-export class AsistenteComponent implements OnInit, AfterViewInit {
+export class AsistenteComponent implements OnInit, AfterViewInit, CrudEntidad<Asistente> {
 
     @ViewChild('formReg', { static: true }) form: NgForm;
 
@@ -19,8 +21,13 @@ export class AsistenteComponent implements OnInit, AfterViewInit {
 
     public registro: any = {};
 
-    constructor(public endpoint: EndpointsService) { }
+    lregistros: Asistente[] = [];
 
+    public componente: any = null;
+
+    constructor(public endpoint: EndpointsService) {
+        this.componente = this;
+    }
     
     ngOnInit() {
         this.endpoint.dcentral.desencriptarDataUser();
@@ -30,18 +37,26 @@ export class AsistenteComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        // this.models.push({
-        //     id: 'gpt-4o-2024-05-13',
-        //     object: 'model',
-        //     created: 1715368132,
-        //     owned_by: 'system'
-        // });
-        // this.models.push({
-        //     id: 'gpt-4o',
-        //     object: 'model',
-        //     created: 1715367049,
-        //     owned_by: 'system'
-        // });
+        this.consultar();
+    }
+
+    consultar() {
+        const idusuario = this.endpoint.dcentral.user.idusuario;
+        this.endpoint.getGenerico<any>(`/asistente/buscar-asistentes/${idusuario}`).subscribe(resp => {
+            this.lregistros = resp.lista as Asistente[];
+        });
+    }
+    crearNuevo() {
+        throw new Error('Method not implemented.');
+    }
+    actualizar() {
+        throw new Error('Method not implemented.');
+    }
+    eliminar() {
+        throw new Error('Method not implemented.');
+    }
+    seleccionarRegistro(reg: Asistente) {
+        console.log(reg);
     }
 
     onSelect(event: any) {
@@ -71,7 +86,7 @@ export class AsistenteComponent implements OnInit, AfterViewInit {
 
     guardar() {
         if (this.selectedFile == null) {
-            return this.endpoint.dcentral.mostrarmsgerror("Suba un archivo antes de grabar");
+            return this.endpoint.dcentral.mostrarmsgerror("Suba un archivo antes de guardar");
         }
         const {name, instructions, model} = this.registro;
         const data = {

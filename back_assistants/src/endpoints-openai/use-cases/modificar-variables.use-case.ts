@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-export const modificarVaribleUseCase = async( assistantId: string) => {
+export enum TipoInstalador {
+  Wordpress,
+  Xamp
+}
+
+export const modificarVaribleUseCase = async( assistantId: string, tipoinstalador: TipoInstalador) => {
 
     const pathEnvioment = process.env.PATH_EJECUTABLE;
     const filePath = join(pathEnvioment, 'src','environments', 'environment.ts');
@@ -11,7 +16,10 @@ export const modificarVaribleUseCase = async( assistantId: string) => {
         const data = readFileSync(filePath, 'utf8');
     
         // Modificar el valor de assistantId
-        const updatedData = data.replace(/assistantId:\s*'[^']*'/, `assistantId: '${assistantId}'`);
+        let updatedData = data.replace(/assistantId:\s*'[^']*'/, `assistantId: '${assistantId}'`);
+        if (tipoinstalador == TipoInstalador.Wordpress) {
+          updatedData = updatedData.replace(/base_url_api:\s*'[^']*'/, `base_url_api: '${process.env.URL_API_BASE}'`);
+        }
     
         // Escribir el contenido modificado de nuevo en el archivo de manera síncrona
         writeFileSync(filePath, updatedData, 'utf8');

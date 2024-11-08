@@ -1,10 +1,10 @@
 {
-  "/chat-platarma-api/**": {
-    "target": "http://127.0.0.1:8091",
+  "/chat-plataforma-api/**": {
+    "target": "http://localhost:8091",
     "pathRewrite": {
-      "^/chat-platarma-api": "/api"
+      "^/chat-plataforma-api": "/api"
     },
     "secure": false,
-    "changeOrigin": false
+    "changeOrigin": true
   }
 }
