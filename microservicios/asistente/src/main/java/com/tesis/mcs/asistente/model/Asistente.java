@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.type.NumericBooleanConverter;
 
 import java.io.Serializable;
 
@@ -45,5 +46,9 @@ public class Asistente implements Serializable {
     @NotNull
     @Column(name = "idasistente", nullable = false)
     private String idasistente;
+
+    @Column(name = "activo", precision = 1)
+    @Convert(converter = NumericBooleanConverter.class)
+    private Boolean activo;
 
 }

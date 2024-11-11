@@ -4,7 +4,7 @@ import { PrimeBasicoModule } from './primengbasico.module';
 
 @NgModule({
 	declarations: [AccionesTablaComponent],
-	imports: [PrimeBasicoModule],
+	imports: [PrimeBasicoModule, ],
 	exports: [
 		PrimeBasicoModule,
 		AccionesTablaComponent

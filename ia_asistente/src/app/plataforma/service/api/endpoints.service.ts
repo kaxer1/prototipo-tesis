@@ -1,9 +1,10 @@
-import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { DataCentralService } from '../data-central.service';
-import { Observable, catchError, map } from 'rxjs';
+import { Observable, catchError, map, finalize } from 'rxjs';
+import { LoadingService } from '../loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class EndpointsService {
   constructor(
     private http: HttpClient,
     public router: Router,
-    public dcentral: DataCentralService
+    public dcentral: DataCentralService,
+    private loadingService: LoadingService
   ) { }
 
   /**Manejo de respuesta de la base de datos cuando existe un error */
@@ -21,8 +23,9 @@ export class EndpointsService {
     return Promise.reject(error);
   }
 
-  public getGenerico<T>(url: string, ObjectParams: any = null, { msgExito, mostrarMsg }: Params = { msgExito: "Éxito", mostrarMsg: true }) {
+  public getGenerico<T>(url: string, ObjectParams: any = null, { msgExito, mostrarMsg, loading}: Params = { msgExito: "Éxito", mostrarMsg: true, loading: true }) {
     this.dcentral.messageService.clear(); // limpia el mensaje
+    this.validacionMostrarLoading(loading);
 
     let headersc = new HttpHeaders();
     headersc = headersc.set('Content-Type', 'application/json');
@@ -55,13 +58,15 @@ export class EndpointsService {
           catchError(error => {  
             this.dcentral.mostrarmsgexito(error);
             return this.handleError(error);
-          })
+          }),
+          finalize(() => this.loadingService.hide())
         );
   }
 
   /**Llamar al servicio rest */
-  public postGenerico<T>(url: string, objeto: any, { msgExito, mostrarMsg }: Params = { msgExito: "Éxito", mostrarMsg: true }) {
+  public postGenerico<T>(url: string, objeto: any, { msgExito, mostrarMsg, loading }: Params = { msgExito: "Éxito", mostrarMsg: true, loading: true }) {
     this.dcentral.messageService.clear(); // limpia el mensaje
+    this.validacionMostrarLoading(loading);
 
     let rq = JSON.stringify(objeto);
     let headersc = new HttpHeaders();
@@ -87,13 +92,15 @@ export class EndpointsService {
             catchError(error => {
               this.dcentral.mostrarmsgexito(error);
               return this.handleError(error);
-            })
+            }),
+            finalize(() => this.loadingService.hide())
         );
   }
 
   /**Llamar al servicio rest */
-  public postFiles<T>(url: string, formData: FormData, { msgExito, mostrarMsg }: Params = { msgExito: "Éxito", mostrarMsg: true }) {
+  public postFiles<T>(url: string, formData: FormData, { msgExito, mostrarMsg, loading }: Params = { msgExito: "Éxito", mostrarMsg: true, loading: true  }) {
     this.dcentral.messageService.clear(); // limpia el mensaje
+    this.validacionMostrarLoading(loading);
 
     const urlCompleta = environment.url_base_proxy + url;
 
@@ -111,13 +118,15 @@ export class EndpointsService {
             catchError(error => {
               this.dcentral.mostrarmsgexito(error);
               return this.handleError(error);
-            })
+            }),
+            finalize(() => this.loadingService.hide())
         );
   }
 
 
-  public downloadFile(url: string, ObjectParams: any = null, msgexito = "Descargado con exito"): Observable<Blob> {
+  public downloadFile(url: string, ObjectParams: any = null, msgexito = "Descargado con exito", loading = true): Observable<Blob> {
     this.dcentral.messageService.clear(); // limpia el mensaje
+    this.validacionMostrarLoading(loading);
 
     let headersc = new HttpHeaders();
     headersc = headersc.set('Content-Type', 'application/json');
@@ -153,8 +162,15 @@ export class EndpointsService {
           catchError(error => {  
             this.dcentral.mostrarmsgexito(error);
             return this.handleError(error);
-          })
+          }),
+          finalize(() => this.loadingService.hide())
         );
+  }
+
+  private validacionMostrarLoading(value: boolean) {
+    if (value) {
+      this.loadingService.show();
+    }
   }
 
 }

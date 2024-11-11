@@ -17,3 +17,11 @@ export const uploadfileAsistente = async( openai: OpenAI, file: Express.Multer.F
     unlinkSync(filePath);
     return response;
 }
+
+
+export const deleteFileAsistente = async( openai: OpenAI, vectorStoreId: string) => {
+
+    let response = await openai.beta.vectorStores.del(vectorStoreId);
+    
+    return response;
+}

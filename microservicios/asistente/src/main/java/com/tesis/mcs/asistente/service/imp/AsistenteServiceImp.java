@@ -33,6 +33,8 @@ public class AsistenteServiceImp implements IAsistenteService {
         asistente.setName(data.getName());
         asistente.setModel(data.getModel());
         asistente.setInstructions(data.getInstructions());
+        asistente.setActivo(data.getActivo());
+        asistente.setIdasistente(data.getIdasistente());
         return repo.save(asistente);
     }
 

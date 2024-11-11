@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface IAsistenteRepository extends JpaRepository<Asistente, Integer> {
 
 
-    @Query("Select t from Asistente t where t.idusuario= ?1")
+    @Query("Select t from Asistente t where t.idusuario= ?1 and t.activo = true")
     List<Asistente> buscarPorIdUsuario(int idusuario);
 
 }

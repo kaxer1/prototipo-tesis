@@ -9,6 +9,9 @@ import org.hibernate.annotations.Comment;
 @Data
 public class AsistenteRequest extends RequestComun<Asistente> {
 
+    @Comment("Id del usuario")
+    private Integer id;
+
     @NotNull
     @Comment("Id de usuario que pertenece")
     private Integer idusuario;
@@ -28,12 +31,13 @@ public class AsistenteRequest extends RequestComun<Asistente> {
     @Comment("Instrucciones del asistente y que debe hacer")
     private String instructions;
 
-    @NotNull
     @Comment("Id del vector storage")
     private String vectorstoreid;
 
-    @NotNull
     @Comment("Id de los asistentes")
     private String idasistente;
+
+    @Comment("Para borrado logico")
+    private Boolean activo;
     
 }

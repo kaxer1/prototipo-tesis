@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CrudEntidad } from './crud.component';
+import { CrudEntidad } from './crud.interface';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
@@ -17,9 +17,7 @@ export class AccionesTablaComponent{
     @Input() reg: any;
     @Input() entidadCrud: CrudEntidad<any>;
 
-    constructor(private confirmationService: ConfirmationService) { 
-        console.log(this.reg);
-        console.log(this.entidadCrud);
+    constructor(private confirmationService: ConfirmationService) {
     }
 
     eliminarRegistro(reg: any) {
@@ -27,8 +25,7 @@ export class AccionesTablaComponent{
           message: 'Está seguro que desea eliminar?',
           header: 'Confirmación',
           accept: () => {
-            this.entidadCrud.seleccionarRegistro(reg);
-            this.entidadCrud.eliminar();
+            this.entidadCrud.eliminar(reg);
           }
         });
       }
